@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Smart Camera</string>
     <string name="str_btn_shutter">Take Photo</string>
+    <string name="str_btn_video">start video</string>
 </resources>
