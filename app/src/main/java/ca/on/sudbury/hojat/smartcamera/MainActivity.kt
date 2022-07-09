@@ -14,6 +14,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import ca.on.sudbury.hojat.smartcamera.databinding.ActivityMainBinding
+import ca.on.sudbury.hojat.smartcamera.utils.Constants
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*

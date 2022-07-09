@@ -1,10 +1,10 @@
-package ca.on.sudbury.hojat.smartcamera
+package ca.on.sudbury.hojat.smartcamera.utils
 
 import android.os.Build
 import android.view.DisplayCutout
 import android.view.View
 import androidx.annotation.RequiresApi
-import ca.on.sudbury.hojat.smartcamera.Constants.FAST_ANIMATION_DURATION
+import ca.on.sudbury.hojat.smartcamera.utils.Constants.FAST_ANIMATION_DURATION
 
 
 /**
