@@ -20,5 +20,13 @@
     <string name="delete_button_alt">Delete</string>
     <string name="delete_dialog">Delete current photo?</string>
     <string name="delete_title">Confirm</string>
+    <string name="str_flash_off">Turns off the flash</string>
+    <string name="str_flash_auto">Puts the flash on Auto mode</string>
+    <string name="str_flash_on">Turns on the flash</string>
+    <string name="str_timer_off">Tirns off the timer</string>
+    <string name="str_timer_3s">Puts the timer on three seconds</string>
+    <string name="str_timer_10s">Puts the timer on ten seconds</string>
+    <string name="str_btn_flash">The button for changing the flash mode</string>
+    <string name="str_btn_timer">The button for changing the timer mode</string>
 
 </resources>
