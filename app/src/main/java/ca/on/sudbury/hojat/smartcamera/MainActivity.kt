@@ -1,183 +1,105 @@
+/*
+ * Copyright 2020 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ca.on.sudbury.hojat.smartcamera
 
-import android.content.pm.PackageManager
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import android.view.KeyEvent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ca.on.sudbury.hojat.smartcamera.databinding.ActivityMainBinding
-import ca.on.sudbury.hojat.smartcamera.utils.Constants
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
+const val KEY_EVENT_ACTION = "key_event_action"
+const val KEY_EVENT_EXTRA = "key_event_extra"
+private const val IMMERSIVE_FLAG_TIMEOUT = 500L
+
+/**
+ * Main entry point into our app. This app follows the single-activity pattern, and all
+ * functionality is implemented in the form of fragments.
+ */
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-    private var imageCapture: ImageCapture? = null
-    private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var activityMainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(activityMainBinding.root)
+    }
 
-        outputDirectory = getOutPutDirectory()
-        cameraExecutor = Executors.newSingleThreadExecutor()
+    override fun onResume() {
+        super.onResume()
+        // Before setting full screen flags, we must wait a bit to let UI settle; otherwise, we may
+        // be trying to set app to immersive mode before it's ready and the flags do not stick
+        activityMainBinding.fragmentContainer.postDelayed({
+            hideSystemUI()
+        }, IMMERSIVE_FLAG_TIMEOUT)
+    }
 
-        // Asking for permissions
-        if (allPermissionsGranted()) {
-            startCamera()
+    /** When key down event is triggered, relay it via local broadcast so fragments can handle it */
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                val intent = Intent(KEY_EVENT_ACTION).apply { putExtra(KEY_EVENT_EXTRA, keyCode) }
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
+    }
+
+    override fun onBackPressed() {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+            // Workaround for Android Q memory leak issue in IRequestFinishCallback$Stub.
+            // (https://issuetracker.google.com/issues/139738913)
+            finishAfterTransition()
         } else {
-            ActivityCompat.requestPermissions(
-                this,
-                Constants.REQUIRED_PERMISSIONS,
-                Constants.REQUEST_CODE_PERMISSIONS
-            )
-        }
-
-        binding.btnTakePhoto.setOnClickListener {
-            takePhoto()
+            super.onBackPressed()
         }
     }
 
-    /**
-     * @return the internal directory of the app which will be deleted
-     * if user deletes this app.
-     */
-    private fun getOutPutDirectory(): File {
+    companion object {
 
-        val mediaDir = externalMediaDirs.firstOrNull()?.let { mFile ->
-            File(mFile, resources.getString(R.string.app_name)).apply {
-                mkdirs()
+        /** Use external media if it is available, our app's file directory otherwise */
+        fun getOutputDirectory(context: Context): File {
+            val appContext = context.applicationContext
+            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
             }
+            return if (mediaDir != null && mediaDir.exists())
+                mediaDir else appContext.filesDir
         }
-
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else filesDir
     }
 
-    // takes and also saves the pic to device
-    private fun takePhoto() {
-        val imageCapture = imageCapture ?: return
-        val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(
-                Constants.FILE_NAME_FORMAT,
-                Locale.getDefault()
-            )
-                .format(
-                    System
-                        .currentTimeMillis()
-                ) + ".jpg"
-        )
-
-        // The options for saving the pic
-        val outputOption = ImageCapture
-            .OutputFileOptions
-            .Builder(photoFile)
-            .build()
-
-        imageCapture.takePicture(
-            outputOption, ContextCompat.getMainExecutor(this),
-            object : ImageCapture.OnImageSavedCallback {
-
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-
-                    val savedUri = Uri.fromFile(photoFile)
-                    val msg = "Photo Saved"
-
-                    Toast.makeText(
-                        this@MainActivity,
-                        "$msg $savedUri",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                override fun onError(exception: ImageCaptureException) {
-                    Log.e(
-                        Constants.TAG,
-                        "onError: ${exception.message}", exception
-                    )
-                    Toast.makeText(this@MainActivity, "couldn't save the image\ntry again later.", Toast.LENGTH_SHORT).show()
-                }
-
-            }
-        )
-    }
-
-    private fun startCamera() {
-
-        // we're getting access to the camera in a way
-        // that can be bound to any lifeCycle owner.
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
-        cameraProviderFuture.addListener({
-
-            // this should be defined as a singleton.
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder()
-                .build()
-                .also { mPreview ->
-                    mPreview.setSurfaceProvider(
-                        binding.viewFinder.surfaceProvider
-                    )
-                }
-
-            imageCapture = ImageCapture.Builder().build()
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    this,
-                    cameraSelector,
-                    preview,
-                    imageCapture
-                )
-            } catch (e: Exception) {
-                Log.e(Constants.TAG, "startCamera failed", e)
-            }
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == Constants.REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(this, "Permissions not granted by the user", Toast.LENGTH_SHORT)
-                    .show()
-                finish()
-            }
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(
+            window,
+            activityMainBinding.fragmentContainer
+        ).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-
-    }
-
-    private fun allPermissionsGranted() = Constants.REQUIRED_PERMISSIONS.all { permission ->
-        ContextCompat.checkSelfPermission(
-            baseContext, permission
-        ) == PackageManager.PERMISSION_GRANTED
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
     }
 }

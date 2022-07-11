@@ -1,16 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Smart Camera</string>
-    <string name="str_btn_shutter">Take Photo</string>
-    <string name="str_btn_video">start video</string>
-    <string name="switch_camera_button_alt">Switch camera</string>
+    <string name="app_name">CameraX Basic</string>
     <string name="capture_button_alt">Capture</string>
+    <string name="switch_camera_button_alt">Switch camera</string>
     <string name="gallery_button_alt">Gallery</string>
-    <string name="str_btn_timer_off">turn off the timer</string>
-    <string name="str_btn_flasher_off">Turn off the flash</string>
-    <string name="str_btn_timer_3s">Set the camera\'s timer to 3 seconds</string>
-    <string name="str_btn_timer_10s">Set the camera\'s timer to 3 seconds</string>
-    <string name="str_btn_flasher_auto">Set flash on automatic mode</string>
-    <string name="str_btn_flasher_on">Turn off the flash</string>
     <string name="back_button_alt">Back</string>
     <string name="share_button_alt">Share</string>
     <string name="share_hint">Share using</string>
@@ -20,13 +13,4 @@
     <string name="delete_button_alt">Delete</string>
     <string name="delete_dialog">Delete current photo?</string>
     <string name="delete_title">Confirm</string>
-    <string name="str_flash_off">Turns off the flash</string>
-    <string name="str_flash_auto">Puts the flash on Auto mode</string>
-    <string name="str_flash_on">Turns on the flash</string>
-    <string name="str_timer_off">Tirns off the timer</string>
-    <string name="str_timer_3s">Puts the timer on three seconds</string>
-    <string name="str_timer_10s">Puts the timer on ten seconds</string>
-    <string name="str_btn_flash">The button for changing the flash mode</string>
-    <string name="str_btn_timer">The button for changing the timer mode</string>
-
 </resources>

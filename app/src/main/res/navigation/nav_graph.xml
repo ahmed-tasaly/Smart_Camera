@@ -1,48 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/permissions_fragment">
 
-    <!--later on, add this line below to the main tag of this file-->
-    <!--    app:startDestination="@id/permissions_fragment"-->
+    <fragment
+        android:id="@+id/permissions_fragment"
+        android:name="ca.on.sudbury.hojat.smartcamera.fragments.PermissionsFragment"
+        android:label="PermissionsFragment">
 
-    <!--    <fragment-->
-    <!--        android:id="@+id/permissions_fragment"-->
-    <!--        android:name="com.android.example.cameraxbasic.fragments.PermissionsFragment"-->
-    <!--        android:label="PermissionsFragment">-->
+        <action
+            android:id="@+id/action_permissions_to_camera"
+            app:destination="@id/camera_fragment"
+            app:popUpTo="@id/permissions_fragment"
+            app:popUpToInclusive="true" />
 
-    <!--        <action-->
-    <!--            android:id="@+id/action_permissions_to_camera"-->
-    <!--            app:destination="@id/camera_fragment"-->
-    <!--            app:popUpTo="@id/permissions_fragment"-->
-    <!--            app:popUpToInclusive="true" />-->
+    </fragment>
 
-    <!--    </fragment>-->
+    <fragment
+        android:id="@+id/camera_fragment"
+        android:name="ca.on.sudbury.hojat.smartcamera.fragments.CameraFragment"
+        android:label="CameraFragment">
 
-    <!--    <fragment-->
-    <!--        android:id="@+id/camera_fragment"-->
-    <!--        android:name="com.android.example.cameraxbasic.fragments.CameraFragment"-->
-    <!--        android:label="CameraFragment">-->
+        <action
+            android:id="@+id/action_camera_to_gallery"
+            app:destination="@id/gallery_fragment" />
 
-    <!--        <action-->
-    <!--            android:id="@+id/action_camera_to_gallery"-->
-    <!--            app:destination="@id/gallery_fragment" />-->
+        <action
+            android:id="@+id/action_camera_to_permissions"
+            app:destination="@id/permissions_fragment"
+            app:popUpTo="@id/camera_fragment"
+            app:popUpToInclusive="true" />
 
-    <!--        <action-->
-    <!--            android:id="@+id/action_camera_to_permissions"-->
-    <!--            app:destination="@id/permissions_fragment"-->
-    <!--            app:popUpTo="@id/camera_fragment"-->
-    <!--            app:popUpToInclusive="true" />-->
+    </fragment>
 
-    <!--    </fragment>-->
-
-    <!--    <fragment-->
-    <!--        android:id="@+id/gallery_fragment"-->
-    <!--        android:name="com.android.example.cameraxbasic.fragments.GalleryFragment"-->
-    <!--        android:label="GalleryFragment">-->
-    <!--        <argument-->
-    <!--            android:name="root_directory"-->
-    <!--            app:argType="string" />-->
-    <!--    </fragment>-->
+    <fragment
+        android:id="@+id/gallery_fragment"
+        android:name="ca.on.sudbury.hojat.smartcamera.fragments.GalleryFragment"
+        android:label="GalleryFragment">
+        <argument
+            android:name="root_directory"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

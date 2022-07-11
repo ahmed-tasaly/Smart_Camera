@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,29 +8,18 @@
     <!-- Enable instant app support -->
     <dist:module dist:instant="true" />
 
-    <!--    Needed features for camera     -->
+    <!-- Declare features -->
     <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.any" />
 
-    <!--    permissions for the camera      -->
+    <!-- Declare permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.SmartCamera"
-        tools:ignore="AllowBackup"
-        tools:targetApi="31">
+        tools:ignore="AllowBackup">
 
         <activity
             android:name=".MainActivity"
@@ -48,13 +38,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Other apps can come here with these intents-->
+            <!-- Register as a system camera app -->
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
                 <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
                 <action android:name="android.media.action.VIDEO_CAMERA" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- App links for http/s -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="example.android.com" />
+                <data android:pathPattern="/camerax" />
             </intent-filter>
 
             <!-- Declare notch support -->

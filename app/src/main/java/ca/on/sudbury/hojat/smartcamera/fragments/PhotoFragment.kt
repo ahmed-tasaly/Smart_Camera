@@ -10,11 +10,12 @@ import ca.on.sudbury.hojat.smartcamera.R
 import com.bumptech.glide.Glide
 import java.io.File
 
-class PhotoFragment : Fragment() {
+
+/** Fragment used for each individual page showing a photo inside of [GalleryFragment] */
+class PhotoFragment internal constructor() : Fragment() {
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ) = ImageView(context)
 
@@ -28,8 +29,6 @@ class PhotoFragment : Fragment() {
     companion object {
         private const val FILE_NAME_KEY = "file_name"
 
-        // other classes can use this static func to create instances of
-        // this fragment and pass a bundle to it.
         fun create(image: File) = PhotoFragment().apply {
             arguments = Bundle().apply {
                 putString(FILE_NAME_KEY, image.absolutePath)

@@ -1,53 +1,66 @@
 package ca.on.sudbury.hojat.smartcamera.fragments
 
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import ca.on.sudbury.hojat.smartcamera.utils.Constants
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
+import ca.on.sudbury.hojat.smartcamera.R
+
+
+private const val PERMISSIONS_REQUEST_CODE = 10
+private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
 /**
- * This fragment asks user to grant app's needed permissions.
- * Once granted, it leads to CameraFragment.
+ * The sole purpose of this fragment is to request permissions and, once granted, display the
+ * camera fragment to the user.
  */
 class PermissionsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (!hasPermissions(requireContext())) {
-            // at least 1 of required permissions isn't granted
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                Constants.REQUIRED_PERMISSIONS,
-                Constants.REQUEST_CODE_PERMISSIONS
-            )
+            // Request camera-related permissions
+            requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         } else {
-            // all is good
+            // If permissions have already been granted, proceed
             navigateToCamera()
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+            if (PackageManager.PERMISSION_GRANTED == grantResults.firstOrNull()) {
+                // Take the user to the success fragment when permission is granted
+                Toast.makeText(context, "Permission request granted", Toast.LENGTH_LONG).show()
+                navigateToCamera()
+            } else {
+                Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun navigateToCamera() {
-        TODO("Needs to be done with coroutines and navigation component")
+        lifecycleScope.launchWhenStarted {
+            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
+                PermissionsFragmentDirections.actionPermissionsToCamera()
+            )
+        }
     }
 
     companion object {
 
-        /**
-         * static method for checking if all the permissions
-         * required by this app are granted.
-         */
-        fun hasPermissions(context: Context) = Constants.REQUIRED_PERMISSIONS.all {
+        /** Convenience method used to check if all permissions required by this app are granted */
+        fun hasPermissions(context: Context) = PERMISSIONS_REQUIRED.all {
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
     }

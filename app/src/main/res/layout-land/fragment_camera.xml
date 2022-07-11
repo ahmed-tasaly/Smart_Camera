@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--
+  ~ Copyright 2020 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     https://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingDefaultResource">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
-        <!--        <variable-->
-        <!--            name="fragment"-->
-        <!--            type="com.android.example.cameraxbasic.fragments.CameraFragment" />-->
+        <variable
+            name="fragment"
+            type="ca.on.sudbury.hojat.smartcamera.fragments.CameraFragment" />
 
-        <!--        <variable-->
-        <!--            name="flash"-->
-        <!--            type="androidx.camera.core.ImageCapture" />-->
+        <variable
+            name="flash"
+            type="androidx.camera.core.ImageCapture" />
 
-        <!--        <variable-->
-        <!--            name="timer"-->
-        <!--            type="com.android.example.cameraxbasic.utils.CameraTimer" />-->
+        <variable
+            name="timer"
+            type="ca.on.sudbury.hojat.smartcamera.utils.CameraTimer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/camera_container"
+        android:background="@android:color/black"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black">
+        android:layout_height="match_parent">
 
         <androidx.camera.view.PreviewView
             android:id="@+id/view_finder"
@@ -33,9 +46,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/camera_ui_container"
+            android:layoutDirection="ltr"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layoutDirection="ltr">
+            android:layout_height="match_parent">
 
             <View
                 android:id="@+id/view"
@@ -58,8 +71,8 @@
                 android:layout_width="@dimen/round_button_small"
                 android:layout_height="@dimen/round_button_small"
                 android:background="@android:color/transparent"
-                android:contentDescription="@string/str_btn_timer"
                 android:scaleType="fitCenter"
+                android:onClick="@{() -> fragment.showTimerOptions()}"
                 app:layout_constraintBottom_toBottomOf="@+id/view"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="@+id/view"
@@ -71,8 +84,8 @@
                 android:layout_width="@dimen/round_button_small"
                 android:layout_height="@dimen/round_button_small"
                 android:background="@android:color/transparent"
-                android:contentDescription="@string/str_btn_flash"
                 android:scaleType="fitCenter"
+                android:onClick="@{() -> fragment.showFlashOptions()}"
                 app:layout_constraintBottom_toBottomOf="@+id/view"
                 app:layout_constraintEnd_toEndOf="@+id/view"
                 app:layout_constraintStart_toEndOf="@+id/guideline"
@@ -83,8 +96,8 @@
                 android:id="@+id/timer_conteiner"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
-                android:background="@android:color/black"
                 android:visibility="gone"
+                android:background="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -96,8 +109,8 @@
                     android:layout_marginStart="36dp"
                     android:layout_marginBottom="8dp"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/str_timer_off"
                     android:scaleType="fitCenter"
+                    android:onClick="@{()-> fragment.closeTimerAndSelect(timer.OFF)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:srcCompat="@drawable/ic_timer_off" />
@@ -108,8 +121,8 @@
                     android:layout_height="@dimen/round_button_small"
                     android:layout_marginBottom="8dp"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/str_timer_3s"
                     android:scaleType="fitCenter"
+                    android:onClick="@{()-> fragment.closeTimerAndSelect(timer.SEC3)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/timer_10s_button"
                     app:layout_constraintStart_toEndOf="@+id/timer_off_button"
@@ -122,8 +135,8 @@
                     android:layout_marginEnd="36dp"
                     android:layout_marginBottom="8dp"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/str_timer_10s"
                     android:scaleType="fitCenter"
+                    android:onClick="@{()-> fragment.closeTimerAndSelect(timer.SEC10)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:srcCompat="@drawable/ic_timer_10_sec" />
@@ -134,8 +147,8 @@
                 android:id="@+id/flash_conteiner"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
-                android:background="@android:color/black"
                 android:visibility="gone"
+                android:background="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -147,8 +160,8 @@
                     android:layout_marginStart="36dp"
                     android:layout_marginBottom="8dp"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/str_flash_off"
                     android:scaleType="fitCenter"
+                    android:onClick="@{()-> fragment.closeFlashOptionsAndSelect(flash.FLASH_MODE_OFF)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:srcCompat="@drawable/ic_flash_off" />
@@ -159,8 +172,8 @@
                     android:layout_height="@dimen/round_button_small"
                     android:layout_marginBottom="8dp"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/str_flash_auto"
                     android:scaleType="fitCenter"
+                    android:onClick="@{()-> fragment.closeFlashOptionsAndSelect(flash.FLASH_MODE_AUTO)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/flash_on_button"
                     app:layout_constraintStart_toEndOf="@+id/flash_off_button"
@@ -173,8 +186,8 @@
                     android:layout_marginEnd="36dp"
                     android:layout_marginBottom="8dp"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/str_flash_on"
                     android:scaleType="fitCenter"
+                    android:onClick="@{()-> fragment.closeFlashOptionsAndSelect(flash.FLASH_MODE_ON)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:srcCompat="@drawable/ic_flash_on" />
@@ -193,12 +206,13 @@
                 <!-- Camera control and gallery buttons -->
                 <ImageButton
                     android:id="@+id/camera_switch_button"
-                    android:layout_width="@dimen/round_button_small_x"
-                    android:layout_height="@dimen/round_button_small_x"
+                    android:layout_width="@dimen/round_button_smallx"
+                    android:layout_height="@dimen/round_button_smallx"
                     android:layout_marginStart="@dimen/margin_small"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/switch_camera_button_alt"
+                    android:onClick="@{() -> fragment.switchCamera()}"
                     android:padding="@dimen/spacing_small"
                     android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -209,10 +223,11 @@
                     android:id="@+id/camera_capture_button"
                     android:layout_width="@dimen/round_button_large"
                     android:layout_height="@dimen/round_button_large"
-                    android:layout_marginVertical="20dp"
                     android:background="@drawable/ic_shutter"
                     android:contentDescription="@string/capture_button_alt"
+                    android:onClick="@{() -> fragment.takePicture()}"
                     android:scaleType="fitCenter"
+                    android:layout_marginVertical="20dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -220,12 +235,13 @@
 
                 <ImageButton
                     android:id="@+id/photo_view_button"
-                    android:layout_width="@dimen/round_button_small_x"
-                    android:layout_height="@dimen/round_button_small_x"
+                    android:layout_width="@dimen/round_button_smallx"
+                    android:layout_height="@dimen/round_button_smallx"
                     android:layout_marginEnd="@dimen/margin_small"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:background="@drawable/ic_outer_circle"
                     android:contentDescription="@string/gallery_button_alt"
+                    android:onClick="@{() -> fragment.showGallery()}"
                     android:padding="@dimen/spacing_large"
                     android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"

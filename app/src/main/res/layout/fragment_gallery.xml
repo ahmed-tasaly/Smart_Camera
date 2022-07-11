@@ -27,7 +27,7 @@
                 android:id="@+id/back_button"
                 android:layout_width="@dimen/round_button_small"
                 android:layout_height="@dimen/round_button_small"
-                android:layout_marginStart="@dimen/margin_x_small"
+                android:layout_marginStart="@dimen/margin_xsmall"
                 android:layout_marginTop="@dimen/margin_small"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/back_button_alt"
