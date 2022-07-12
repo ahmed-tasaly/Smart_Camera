@@ -67,7 +67,8 @@ dependencies {
     // CameraX Extensions library
     // implementation 'androidx.camera:camera-extensions:1.0.0-alpha27'
 
-    //WindowManager
+    //WindowManager (don't update it for now)
+    //noinspection GradleDependency
     implementation 'androidx.window:window:1.0.0-alpha09'
 
     // Glide
