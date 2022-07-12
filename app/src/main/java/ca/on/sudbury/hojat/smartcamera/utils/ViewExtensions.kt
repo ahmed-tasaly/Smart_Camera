@@ -3,19 +3,15 @@ package ca.on.sudbury.hojat.smartcamera.utils
 import android.os.Build
 import android.view.DisplayCutout
 import android.view.View
-import android.view.WindowManager
-import android.widget.ImageButton
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_FAST_MILLIS
-import ca.on.sudbury.hojat.smartcamera.utils.Constants.FLAGS_FULLSCREEN
 
 
 /**
- * Simulate a button click, including a small delay while it is being pressed to trigger the
- * appropriate animations.
+ * Simulate a click, including a small delay while it is being
+ * pressed to trigger the appropriate animations.
  */
-fun ImageButton.simulateClick(delay: Long = ANIMATION_FAST_MILLIS) {
+fun View.simulateClick(delay: Long = ANIMATION_FAST_MILLIS) {
     performClick()
     isPressed = true
     invalidate()
@@ -47,20 +43,3 @@ fun View.padWithDisplayCutout() {
     }
 }
 
-/** Same as [AlertDialog.show] but setting immersive mode in the dialog's window */
-fun AlertDialog.showImmersive() {
-    // Set the dialog to not focusable
-    window?.setFlags(
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-    )
-
-    // Make sure that the dialog's window is in full screen
-    window?.decorView?.systemUiVisibility = FLAGS_FULLSCREEN
-
-    // Show the dialog while still in immersive mode
-    show()
-
-    // Set the dialog to focusable again
-    window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
-}
