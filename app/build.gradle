@@ -46,9 +46,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    // Navigation library
+    // Navigation library (don't update it for now)
     def nav_version = "2.3.5"
+    //noinspection GradleDependency
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    //noinspection GradleDependency
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     // CameraX core library
