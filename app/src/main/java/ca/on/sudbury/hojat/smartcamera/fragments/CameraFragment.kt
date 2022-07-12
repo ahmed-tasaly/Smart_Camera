@@ -40,9 +40,9 @@ import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_EXTRA
 import ca.on.sudbury.hojat.smartcamera.MainActivity
 import ca.on.sudbury.hojat.smartcamera.R
 import ca.on.sudbury.hojat.smartcamera.databinding.FragmentCameraBinding
-import ca.on.sudbury.hojat.smartcamera.utils.ANIMATION_FAST_MILLIS
-import ca.on.sudbury.hojat.smartcamera.utils.ANIMATION_SLOW_MILLIS
 import ca.on.sudbury.hojat.smartcamera.utils.CameraTimer
+import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_FAST_MILLIS
+import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_SLOW_MILLIS
 import ca.on.sudbury.hojat.smartcamera.utils.simulateClick
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
