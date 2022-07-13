@@ -34,8 +34,7 @@ const val KEY_EVENT_EXTRA = "key_event_extra"
 private const val IMMERSIVE_FLAG_TIMEOUT = 500L
 
 /**
- * Main entry point into our app. This app follows the single-activity pattern, and all
- * functionality is implemented in the form of fragments.
+ * One Activity with various Fragments attached to it.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -56,7 +55,11 @@ class MainActivity : AppCompatActivity() {
         }, IMMERSIVE_FLAG_TIMEOUT)
     }
 
-    /** When key down event is triggered, relay it via local broadcast so fragments can handle it */
+    /**
+     * This Activity receives the event when user presses volume-down key of
+     * the device; it broadcasts it locally so CameraFragment can use it
+     * for capturing a picture.
+     **/
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
