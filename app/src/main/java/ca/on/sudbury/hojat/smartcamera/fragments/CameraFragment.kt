@@ -13,19 +13,13 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraInfoUnavailableException
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCapture
+import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.Metadata
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
@@ -49,14 +43,13 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
-import java.util.ArrayDeque
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -118,7 +111,7 @@ class CameraFragment : Fragment() {
         override fun onDisplayRemoved(displayId: Int) = Unit
         override fun onDisplayChanged(displayId: Int) = view?.let { view ->
             if (displayId == this@CameraFragment.displayId) {
-                Log.d(TAG, "Rotation changed: ${view.display.rotation}")
+                Timber.d("Rotation changed: ${view.display.rotation}")
                 imageCapture?.targetRotation = view.display.rotation
                 imageAnalyzer?.targetRotation = view.display.rotation
             }
@@ -257,10 +250,10 @@ class CameraFragment : Fragment() {
 
         // Get screen metrics used to setup camera for full screen resolution
         val metrics = windowManager.getCurrentWindowMetrics().bounds
-        Log.d(TAG, "Screen metrics: ${metrics.width()} x ${metrics.height()}")
+        Timber.d("Screen metrics: ${metrics.width()} x ${metrics.height()}")
 
         val screenAspectRatio = aspectRatio(metrics.width(), metrics.height())
-        Log.d(TAG, "Preview aspect ratio: $screenAspectRatio")
+        Timber.d("Preview aspect ratio: $screenAspectRatio")
 
         val rotation = fragmentCameraBinding.viewFinder.display.rotation
 
@@ -304,7 +297,7 @@ class CameraFragment : Fragment() {
                     // Values returned from our analyzer are passed to the attached listener
                     // We log image analysis results here - you should do something useful
                     // instead!
-                    Log.d(TAG, "Average luminosity: $luma")
+                    Timber.d("Average luminosity: $luma")
                 })
             }
 
@@ -320,8 +313,8 @@ class CameraFragment : Fragment() {
 
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(fragmentCameraBinding.viewFinder.surfaceProvider)
-        } catch (exc: Exception) {
-            Log.e(TAG, "Use case binding failed", exc)
+        } catch (e: Exception) {
+            Timber.e("Use case binding failed ${e.message}")
         }
     }
 
@@ -398,13 +391,13 @@ class CameraFragment : Fragment() {
             // Setup image capture listener which is triggered after photo has been taken
             imageCapture.takePicture(
                 outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
-                    override fun onError(exc: ImageCaptureException) {
-                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    override fun onError(e: ImageCaptureException) {
+                        Timber.e("Photo capture failed: ${e.message}")
                     }
 
                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                         val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
-                        Log.d(TAG, "Photo capture succeeded: $savedUri")
+                        Timber.d("Photo capture succeeded: $savedUri")
 
                         // We can only change the foreground Drawable using API level 23+ API
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -430,7 +423,7 @@ class CameraFragment : Fragment() {
                             arrayOf(savedUri.toFile().absolutePath),
                             arrayOf(mimeType)
                         ) { _, uri ->
-                            Log.d(TAG, "Image capture scanned into media store: $uri")
+                            Timber.d("Image capture scanned into media store: $uri")
                         }
                     }
                 })
@@ -608,7 +601,6 @@ class CameraFragment : Fragment() {
 
     companion object {
 
-        private const val TAG = "CameraXBasic"
         private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val PHOTO_EXTENSION = ".jpg"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
