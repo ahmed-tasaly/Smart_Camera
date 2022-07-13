@@ -67,7 +67,7 @@ class CameraFragment : Fragment() {
 
     private var _fragmentCameraBinding: FragmentCameraBinding? = null
 
-    private val fragmentCameraBinding get() = _fragmentCameraBinding!!
+    private val binding get() = _fragmentCameraBinding!!
 
     private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
@@ -95,7 +95,7 @@ class CameraFragment : Fragment() {
             when (intent.getIntExtra(KEY_EVENT_EXTRA, KeyEvent.KEYCODE_UNKNOWN)) {
                 // When the volume down button is pressed, simulate a shutter button click
                 KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                    fragmentCameraBinding.cameraCaptureButton.simulateClick()
+                    binding.cameraCaptureButton.simulateClick()
                 }
             }
         }
@@ -147,12 +147,12 @@ class CameraFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _fragmentCameraBinding = FragmentCameraBinding.inflate(inflater, container, false)
-        return fragmentCameraBinding.root
+        return binding.root
     }
 
     private fun setGalleryThumbnail(uri: Uri) {
         // Run the operations in the view's thread
-        fragmentCameraBinding.photoViewButton.let { photoViewButton ->
+        binding.photoViewButton.let { photoViewButton ->
             photoViewButton.post {
                 // Remove thumbnail padding
                 photoViewButton.setPadding(resources.getDimension(R.dimen.stroke_small).toInt())
@@ -170,7 +170,7 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fragmentCameraBinding.fragment = this
+        binding.fragment = this
 
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -191,10 +191,10 @@ class CameraFragment : Fragment() {
         outputDirectory = MainActivity.getOutputDirectory(requireContext())
 
         // Wait for the views to be properly laid out
-        fragmentCameraBinding.viewFinder.post {
+        binding.viewFinder.post {
 
             // Keep track of the display in which this view is attached
-            displayId = fragmentCameraBinding.viewFinder.display.displayId
+            displayId = binding.viewFinder.display.displayId
 
             // Build UI controls
             updateCameraUi()
@@ -255,7 +255,7 @@ class CameraFragment : Fragment() {
         val screenAspectRatio = aspectRatio(metrics.width(), metrics.height())
         Timber.d("Preview aspect ratio: $screenAspectRatio")
 
-        val rotation = fragmentCameraBinding.viewFinder.display.rotation
+        val rotation = binding.viewFinder.display.rotation
 
         // CameraProvider
         val cameraProvider = cameraProvider
@@ -312,7 +312,7 @@ class CameraFragment : Fragment() {
             )
 
             // Attach the viewfinder's surface provider to preview use case
-            preview?.setSurfaceProvider(fragmentCameraBinding.viewFinder.surfaceProvider)
+            preview?.setSurfaceProvider(binding.viewFinder.surfaceProvider)
         } catch (e: Exception) {
             Timber.e("Use case binding failed ${e.message}")
         }
@@ -347,24 +347,24 @@ class CameraFragment : Fragment() {
             }
         }
 
-        fragmentCameraBinding.cameraSwitchButton.isEnabled = false
+        binding.cameraSwitchButton.isEnabled = false
     }
 
     fun takePicture() {
         lifecycleScope.launch(Dispatchers.Main) {
             when (seletedTimer) {
                 CameraTimer.SEC3 -> for (i in 3 downTo 1) {
-                    fragmentCameraBinding.countdown.text = i.toString()
+                    binding.countdown.text = i.toString()
                     delay(1000)
                 }
 
                 CameraTimer.SEC10 -> for (i in 10 downTo 1) {
-                    fragmentCameraBinding.countdown.text = i.toString()
+                    binding.countdown.text = i.toString()
                     delay(1000)
                 }
-                else -> fragmentCameraBinding.countdown.text = ""
+                else -> binding.countdown.text = ""
             }
-            fragmentCameraBinding.countdown.text = ""
+            binding.countdown.text = ""
             imagePhoto()
         }
     }
@@ -432,10 +432,10 @@ class CameraFragment : Fragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                 // Display flash animation to indicate that photo was captured
-                fragmentCameraBinding.root.postDelayed({
-                    fragmentCameraBinding.root.foreground = ColorDrawable(Color.WHITE)
-                    fragmentCameraBinding.root.postDelayed(
-                        { fragmentCameraBinding.root.foreground = null }, ANIMATION_FAST_MILLIS
+                binding.root.postDelayed({
+                    binding.root.foreground = ColorDrawable(Color.WHITE)
+                    binding.root.postDelayed(
+                        { binding.root.foreground = null }, ANIMATION_FAST_MILLIS
                     )
                 }, ANIMATION_SLOW_MILLIS)
             }
@@ -444,10 +444,10 @@ class CameraFragment : Fragment() {
 
     fun switchCamera() {
         lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
-            fragmentCameraBinding.cameraSwitchButton.setImageResource(R.drawable.ic_camera_front)
+            binding.cameraSwitchButton.setImageResource(R.drawable.ic_camera_front)
             CameraSelector.LENS_FACING_BACK
         } else {
-            fragmentCameraBinding.cameraSwitchButton.setImageResource(R.drawable.ic_camera_rear)
+            binding.cameraSwitchButton.setImageResource(R.drawable.ic_camera_rear)
             CameraSelector.LENS_FACING_FRONT
         }
         bindCameraUseCases()
@@ -465,13 +465,13 @@ class CameraFragment : Fragment() {
     }
 
     fun showTimerOptions() {
-        fragmentCameraBinding.timerConteiner.visibility = View.VISIBLE
+        binding.timerConteiner.visibility = View.VISIBLE
     }
 
     fun closeTimerAndSelect(timer: CameraTimer) {
         seletedTimer = timer
-        fragmentCameraBinding.timerConteiner.visibility = View.GONE
-        fragmentCameraBinding.timerButton.setImageResource(setImageDrawableSelect(timer))
+        binding.timerConteiner.visibility = View.GONE
+        binding.timerButton.setImageResource(setImageDrawableSelect(timer))
     }
 
     private fun setImageDrawableSelect(timer: CameraTimer) = when (timer) {
@@ -481,13 +481,13 @@ class CameraFragment : Fragment() {
     }
 
     fun showFlashOptions() {
-        fragmentCameraBinding.flashConteiner.visibility = View.VISIBLE
+        binding.flashConteiner.visibility = View.VISIBLE
     }
 
     fun closeFlashOptionsAndSelect(flashMode: Int) {
         imageCapture?.flashMode = flashMode
-        fragmentCameraBinding.flashConteiner.visibility = View.GONE
-        fragmentCameraBinding.flashButton.setImageResource(setImageDrawableFlashMode(flashMode))
+        binding.flashConteiner.visibility = View.GONE
+        binding.flashButton.setImageResource(setImageDrawableFlashMode(flashMode))
     }
 
     private fun setImageDrawableFlashMode(flashMode: Int) = when (flashMode) {
@@ -500,10 +500,10 @@ class CameraFragment : Fragment() {
     /** Enabled or disabled a button to switch cameras depending on the available cameras */
     private fun updateCameraSwitchButton() {
         try {
-            fragmentCameraBinding.cameraSwitchButton.isEnabled =
+            binding.cameraSwitchButton.isEnabled =
                 hasBackCamera() && hasFrontCamera()
         } catch (exception: CameraInfoUnavailableException) {
-            fragmentCameraBinding.cameraSwitchButton.isEnabled = false
+            binding.cameraSwitchButton.isEnabled = false
         }
     }
 
