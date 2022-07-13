@@ -38,7 +38,7 @@ private const val IMMERSIVE_FLAG_TIMEOUT = 500L
  */
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var activityMainBinding: ActivityMainBinding
+    private lateinit var activityMainBinding: ActivityMainBinding // main UI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
      * the device; it broadcasts it locally so CameraFragment can use it
      * for capturing a picture.
      **/
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        return when (keyCode) {
+    override fun onKeyDown(keyCode: Int, event: KeyEvent) =
+        when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
                 val intent = Intent(KEY_EVENT_ACTION).apply { putExtra(KEY_EVENT_EXTRA, keyCode) }
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onKeyDown(keyCode, event)
         }
-    }
+
 
     override fun onBackPressed() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
@@ -81,19 +81,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-
-        /** Use external media if it is available, our app's file directory otherwise */
-        fun getOutputDirectory(context: Context): File {
-            val appContext = context.applicationContext
-            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
-            }
-            return if (mediaDir != null && mediaDir.exists())
-                mediaDir else appContext.filesDir
-        }
-    }
-
+    /**
+     * Hides the status bar and navigation bar of the system.
+     */
     private fun hideSystemUI() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsControllerCompat(
@@ -103,6 +93,18 @@ class MainActivity : AppCompatActivity() {
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+    companion object {
+        /** Use external media if it is available, our app's file directory otherwise */
+        fun getOutputDirectory(context: Context): File {
+            val appContext = context.applicationContext
+            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
+            }
+            return if (mediaDir != null && mediaDir.exists())
+                mediaDir else appContext.filesDir
         }
     }
 }

@@ -16,8 +16,8 @@ private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
 /**
- * The sole purpose of this fragment is to request permissions and, once granted, display the
- * camera fragment to the user.
+ * This fragment doesn't have a UI and its sole purpose is to request
+ * permissions and, once granted, display the camera fragment to the user.
  */
 class PermissionsFragment : Fragment() {
 
