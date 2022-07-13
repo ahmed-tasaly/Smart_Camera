@@ -2,6 +2,7 @@
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/permissions_fragment">
 
@@ -21,7 +22,8 @@
     <fragment
         android:id="@+id/camera_fragment"
         android:name="ca.on.sudbury.hojat.smartcamera.fragments.CameraFragment"
-        android:label="CameraFragment">
+        android:label="CameraFragment"
+        tools:layout="@layout/fragment_camera">
 
         <action
             android:id="@+id/action_camera_to_gallery"
@@ -37,8 +39,10 @@
 
     <fragment
         android:id="@+id/gallery_fragment"
+
         android:name="ca.on.sudbury.hojat.smartcamera.fragments.GalleryFragment"
-        android:label="GalleryFragment">
+        android:label="GalleryFragment"
+        tools:layout="@layout/fragment_gallery">
         <argument
             android:name="root_directory"
             app:argType="string" />
