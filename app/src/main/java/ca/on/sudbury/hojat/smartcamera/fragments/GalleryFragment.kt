@@ -58,7 +58,7 @@ class GalleryFragment internal constructor() : Fragment() {
         // Walk through all files in the root directory
         // We reverse the order of the list to present the last photos first
         mediaList = rootDirectory.listFiles { file ->
-            EXTENSION_WHITELIST.contains(file.extension.toUpperCase(Locale.ROOT))
+            EXTENSION_WHITELIST.contains(file.extension.uppercase(Locale.ROOT))
         }?.sortedDescending()?.toMutableList() ?: mutableListOf()
     }
 
