@@ -80,7 +80,7 @@ class CameraFragment : Fragment() {
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private lateinit var windowManager: WindowManager
-    private var seletedTimer = CameraTimer.OFF
+    private var selectedTimer = CameraTimer.OFF
 
     private val displayManager by lazy {
         requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -352,7 +352,7 @@ class CameraFragment : Fragment() {
 
     fun takePicture() {
         lifecycleScope.launch(Dispatchers.Main) {
-            when (seletedTimer) {
+            when (selectedTimer) {
                 CameraTimer.SEC3 -> for (i in 3 downTo 1) {
                     binding.countdown.text = i.toString()
                     delay(1000)
@@ -469,7 +469,7 @@ class CameraFragment : Fragment() {
     }
 
     fun closeTimerAndSelect(timer: CameraTimer) {
-        seletedTimer = timer
+        selectedTimer = timer
         binding.timerConteiner.visibility = View.GONE
         binding.timerButton.setImageResource(setImageDrawableSelect(timer))
     }
