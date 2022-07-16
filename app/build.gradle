@@ -37,6 +37,14 @@ android {
 
 dependencies {
 
+    // Koin DI
+    implementation "io.insert-koin:koin-core:2.2.3"
+    implementation "io.insert-koin:koin-android:2.2.3"
+    implementation "io.insert-koin:koin-androidx-scope:2.1.6"
+    implementation "io.insert-koin:koin-androidx-viewmodel:2.1.6"
+    testImplementation "io.insert-koin:koin-test:2.2.3"
+    testImplementation "io.insert-koin:koin-test-junit:2.2.3"
+
     def lifecycle_version = "2.6.0-alpha01"
     def arch_version = "2.1.0"
     // ViewModel
@@ -63,7 +71,6 @@ dependencies {
 
     // Test helpers for LiveData
     testImplementation "androidx.arch.core:core-testing:$arch_version"
-
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -99,7 +106,7 @@ dependencies {
     implementation "androidx.camera:camera-view:$camerax_version"
 
     // CameraX Extensions library
-     implementation "androidx.camera:camera-extensions:$camerax_version"
+    implementation "androidx.camera:camera-extensions:$camerax_version"
 
     //WindowManager (don't update it for now)
     //noinspection GradleDependency
