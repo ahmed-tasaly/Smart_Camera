@@ -11,7 +11,10 @@ import com.bumptech.glide.Glide
 import java.io.File
 
 
-/** Fragment used for each individual page showing a photo inside of [GalleryFragment] */
+/** Fragment used for each individual page showing a photo inside of [GalleryFragment]
+ *
+ * todo: I need to merge the logic of this with [GalleryFragment].
+ **/
 class PhotoFragment internal constructor() : Fragment() {
 
     override fun onCreateView(

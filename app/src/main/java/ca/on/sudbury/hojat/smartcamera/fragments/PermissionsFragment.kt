@@ -18,6 +18,8 @@ private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 /**
  * This fragment doesn't have a UI and its sole purpose is to request
  * permissions and, once granted, display the camera fragment to the user.
+ *
+ * todo: I need to move the logic of this class to somewhere else.
  */
 class PermissionsFragment : Fragment() {
 
