@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
+import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.Metadata
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -46,6 +47,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import ca.on.sudbury.hojat.smartcamera.databinding.FragmentCameraBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
@@ -118,6 +120,8 @@ class CameraFragment : Fragment() {
             }
         } ?: Unit
     }
+
+    val vm: CameraViewModel by viewModel()
 
     override fun onResume() {
         super.onResume()
@@ -203,6 +207,9 @@ class CameraFragment : Fragment() {
             // Set up the camera and its use cases
             setUpCamera()
         }
+
+        // Todo: let's see if koin works correctly here
+        Toast.makeText(requireContext(), vm.sayHello(), Toast.LENGTH_SHORT).show()
     }
 
     /**
