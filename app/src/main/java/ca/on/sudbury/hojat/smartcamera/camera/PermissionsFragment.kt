@@ -1,4 +1,4 @@
-package ca.on.sudbury.hojat.smartcamera.fragments
+package ca.on.sudbury.hojat.smartcamera.camera
 
 import android.Manifest
 import android.content.Context

@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="ca.on.sudbury.hojat.smartcamera.fragments.PermissionsFragment"
+        android:name="ca.on.sudbury.hojat.smartcamera.camera.PermissionsFragment"
         android:label="PermissionsFragment">
 
         <action
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="ca.on.sudbury.hojat.smartcamera.fragments.CameraFragment"
+        android:name="ca.on.sudbury.hojat.smartcamera.camera.CameraFragment"
         android:label="CameraFragment"
         tools:layout="@layout/fragment_camera">
 

@@ -1,4 +1,4 @@
-package ca.on.sudbury.hojat.smartcamera.fragments
+package ca.on.sudbury.hojat.smartcamera.camera
 
 import androidx.lifecycle.ViewModel
 

@@ -1,4 +1,4 @@
-package ca.on.sudbury.hojat.smartcamera.fragments
+package ca.on.sudbury.hojat.smartcamera.camera
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
@@ -33,7 +33,7 @@ import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_ACTION
 import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_EXTRA
 import ca.on.sudbury.hojat.smartcamera.MainActivity
 import ca.on.sudbury.hojat.smartcamera.R
-import ca.on.sudbury.hojat.smartcamera.databinding.FragmentCameraBinding
+import ca.on.sudbury.hojat.smartcamera.fragments.EXTENSION_WHITELIST
 import ca.on.sudbury.hojat.smartcamera.utils.CameraTimer
 import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_FAST_MILLIS
 import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_SLOW_MILLIS
@@ -45,6 +45,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
+import ca.on.sudbury.hojat.smartcamera.databinding.FragmentCameraBinding
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
@@ -458,8 +459,9 @@ class CameraFragment : Fragment() {
             Navigation.findNavController(
                 requireActivity(), R.id.fragment_container
             ).navigate(
-                CameraFragmentDirections
-                    .actionCameraToGallery(outputDirectory.absolutePath)
+                CameraFragmentDirections.actionCameraToGallery(
+                    outputDirectory.absolutePath
+                )
             )
         }
     }
