@@ -33,7 +33,7 @@ import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_ACTION
 import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_EXTRA
 import ca.on.sudbury.hojat.smartcamera.MainActivity
 import ca.on.sudbury.hojat.smartcamera.R
-import ca.on.sudbury.hojat.smartcamera.fragments.EXTENSION_WHITELIST
+import ca.on.sudbury.hojat.smartcamera.gallery.EXTENSION_WHITELIST
 import ca.on.sudbury.hojat.smartcamera.utils.CameraTimer
 import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_FAST_MILLIS
 import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_SLOW_MILLIS

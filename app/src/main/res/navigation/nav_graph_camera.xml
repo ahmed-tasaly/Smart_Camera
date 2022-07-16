@@ -40,7 +40,7 @@
     <fragment
         android:id="@+id/gallery_fragment"
 
-        android:name="ca.on.sudbury.hojat.smartcamera.fragments.GalleryFragment"
+        android:name="ca.on.sudbury.hojat.smartcamera.gallery.GalleryFragment"
         android:label="GalleryFragment"
         tools:layout="@layout/fragment_gallery">
         <argument

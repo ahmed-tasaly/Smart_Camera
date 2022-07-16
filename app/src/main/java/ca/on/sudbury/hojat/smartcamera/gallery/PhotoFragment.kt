@@ -1,4 +1,4 @@
-package ca.on.sudbury.hojat.smartcamera.fragments
+package ca.on.sudbury.hojat.smartcamera.gallery
 
 import android.os.Bundle
 import android.view.LayoutInflater
