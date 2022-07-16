@@ -38,12 +38,10 @@ android {
 dependencies {
 
     // Koin DI
-    implementation "io.insert-koin:koin-core:2.2.3"
-    implementation "io.insert-koin:koin-android:2.2.3"
-    implementation "io.insert-koin:koin-androidx-scope:2.1.6"
-    implementation "io.insert-koin:koin-androidx-viewmodel:2.1.6"
-    testImplementation "io.insert-koin:koin-test:2.2.3"
-    testImplementation "io.insert-koin:koin-test-junit:2.2.3"
+    def koin_version = "3.2.0"
+    implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
+
 
     def lifecycle_version = "2.6.0-alpha01"
     def arch_version = "2.1.0"
