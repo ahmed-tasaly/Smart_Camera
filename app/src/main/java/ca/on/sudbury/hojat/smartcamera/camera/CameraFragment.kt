@@ -36,6 +36,7 @@ import ca.on.sudbury.hojat.smartcamera.MainActivity
 import ca.on.sudbury.hojat.smartcamera.R
 import ca.on.sudbury.hojat.smartcamera.gallery.EXTENSION_WHITELIST
 import ca.on.sudbury.hojat.smartcamera.utils.CameraTimer
+import ca.on.sudbury.hojat.smartcamera.utils.Constants
 import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_FAST_MILLIS
 import ca.on.sudbury.hojat.smartcamera.utils.Constants.ANIMATION_SLOW_MILLIS
 import ca.on.sudbury.hojat.smartcamera.utils.simulateClick
@@ -339,7 +340,7 @@ class CameraFragment : Fragment() {
      */
     private fun aspectRatio(width: Int, height: Int): Int {
         val previewRatio = max(width, height).toDouble() / min(width, height)
-        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+        if (abs(previewRatio - Constants.RATIO_4_3_VALUE) <= abs(previewRatio - Constants.RATIO_16_9_VALUE)) {
             return AspectRatio.RATIO_4_3
         }
         return AspectRatio.RATIO_16_9
@@ -382,7 +383,8 @@ class CameraFragment : Fragment() {
         imageCapture?.let { imageCapture ->
 
             // Create output file to hold the image
-            val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
+            val photoFile =
+                createFile(outputDirectory, Constants.FILENAME, Constants.PHOTO_EXTENSION)
 
             // Setup image capture metadata
             val metadata = Metadata().apply {
@@ -609,11 +611,6 @@ class CameraFragment : Fragment() {
     }
 
     companion object {
-
-        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private const val PHOTO_EXTENSION = ".jpg"
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
 
         /** Helper function used to create a timestamped file */
         private fun createFile(baseFolder: File, format: String, extension: String) =
