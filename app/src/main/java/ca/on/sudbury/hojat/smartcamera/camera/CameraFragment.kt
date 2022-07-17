@@ -34,6 +34,7 @@ import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_ACTION
 import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_EXTRA
 import ca.on.sudbury.hojat.smartcamera.MainActivity
 import ca.on.sudbury.hojat.smartcamera.R
+import ca.on.sudbury.hojat.smartcamera.databinding.FragmentCameraBinding
 import ca.on.sudbury.hojat.smartcamera.gallery.EXTENSION_WHITELIST
 import ca.on.sudbury.hojat.smartcamera.utils.CameraTimer
 import ca.on.sudbury.hojat.smartcamera.utils.Constants
@@ -45,14 +46,11 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.io.File
-import ca.on.sudbury.hojat.smartcamera.databinding.FragmentCameraBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.nio.ByteBuffer
-import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.math.max
@@ -70,28 +68,15 @@ typealias LumaListener = (luma: Double) -> Unit
 class CameraFragment : Fragment() {
 
     private var _fragmentCameraBinding: FragmentCameraBinding? = null
-
     private val binding get() = _fragmentCameraBinding!!
 
     private lateinit var outputDirectory: File
-    private lateinit var broadcastManager: LocalBroadcastManager
 
     private var displayId: Int = -1
-    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
-    private var preview: Preview? = null
-    private var imageCapture: ImageCapture? = null
-    private var imageAnalyzer: ImageAnalysis? = null
-    private var camera: Camera? = null
-    private var cameraProvider: ProcessCameraProvider? = null
-    private lateinit var windowManager: WindowManager
-    private var selectedTimer = CameraTimer.OFF
 
     private val displayManager by lazy {
         requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
-    }
-
-    /** Blocking camera operations are performed using this executor */
-    private lateinit var cameraExecutor: ExecutorService
+    } // this will remain in fragment
 
     /** Volume down button receiver used to trigger shutter */
     private val volumeDownReceiver = object : BroadcastReceiver() {
@@ -103,7 +88,7 @@ class CameraFragment : Fragment() {
                 }
             }
         }
-    }
+    } // this will remain in fragment
 
     /**
      * We need a display listener for orientation changes that do not trigger a configuration
@@ -116,13 +101,13 @@ class CameraFragment : Fragment() {
         override fun onDisplayChanged(displayId: Int) = view?.let { view ->
             if (displayId == this@CameraFragment.displayId) {
                 Timber.d("Rotation changed: ${view.display.rotation}")
-                imageCapture?.targetRotation = view.display.rotation
-                imageAnalyzer?.targetRotation = view.display.rotation
+                vm.imageCapture?.targetRotation = view.display.rotation
+                vm.imageAnalyzer?.targetRotation = view.display.rotation
             }
         } ?: Unit
-    }
+    } // this will remain in fragment
 
-    val vm: CameraViewModel by viewModel()
+    private val vm: CameraViewModel by viewModel()
 
     override fun onResume() {
         super.onResume()
@@ -136,15 +121,15 @@ class CameraFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        _fragmentCameraBinding = null
         super.onDestroyView()
+        _fragmentCameraBinding = null
 
         // Shut down our background executor
-        cameraExecutor.shutdown()
+        vm.cameraExecutor.shutdown()
 
         // Unregister the broadcast receivers and listeners
-        broadcastManager.unregisterReceiver(volumeDownReceiver)
-        displayManager.unregisterDisplayListener(displayListener)
+        vm.broadcastManager.unregisterReceiver(volumeDownReceiver)// this will remain in fragment
+        displayManager.unregisterDisplayListener(displayListener)// this will remain in fragment
     }
 
     override fun onCreateView(
@@ -179,19 +164,22 @@ class CameraFragment : Fragment() {
         binding.fragment = this
 
         // Initialize our background executor
-        cameraExecutor = Executors.newSingleThreadExecutor()
+        vm.cameraExecutor = Executors.newSingleThreadExecutor()
 
-        broadcastManager = LocalBroadcastManager.getInstance(view.context)
+        vm.broadcastManager = LocalBroadcastManager.getInstance(view.context)
 
         // Set up the intent filter that will receive events from our main activity
         val filter = IntentFilter().apply { addAction(KEY_EVENT_ACTION) }
-        broadcastManager.registerReceiver(volumeDownReceiver, filter)
+        vm.broadcastManager.registerReceiver(
+            volumeDownReceiver,
+            filter
+        )// this will remain in fragment
 
         // Every time the orientation of device changes, update rotation for use cases
-        displayManager.registerDisplayListener(displayListener, null)
+        displayManager.registerDisplayListener(displayListener, null)// this will remain in fragment
 
         //Initialize WindowManager to retrieve display metrics
-        windowManager = WindowManager(view.context)
+        vm.windowManager = WindowManager(view.context)
 
         // Determine the output directory
         outputDirectory = MainActivity.getOutputDirectory(requireContext())
@@ -209,7 +197,7 @@ class CameraFragment : Fragment() {
             setUpCamera()
         }
 
-        // Todo: let's see if koin works correctly here
+        // let's see if koin works correctly here
         Toast.makeText(requireContext(), vm.sayHello(), Toast.LENGTH_SHORT).show()
     }
 
@@ -237,12 +225,12 @@ class CameraFragment : Fragment() {
         cameraProviderFuture.addListener({
 
             // CameraProvider
-            cameraProvider = cameraProviderFuture.get()
+            vm.cameraProvider = cameraProviderFuture.get()
 
             // Select lensFacing depending on the available cameras
-            lensFacing = when {
-                hasBackCamera() -> CameraSelector.LENS_FACING_BACK
-                hasFrontCamera() -> CameraSelector.LENS_FACING_FRONT
+            vm.lensFacing = when {
+                vm.hasBackCamera() -> CameraSelector.LENS_FACING_BACK
+                vm.hasFrontCamera() -> CameraSelector.LENS_FACING_FRONT
                 else -> throw IllegalStateException("Back and front camera are unavailable")
             }
 
@@ -258,7 +246,7 @@ class CameraFragment : Fragment() {
     private fun bindCameraUseCases() {
 
         // Get screen metrics used to setup camera for full screen resolution
-        val metrics = windowManager.getCurrentWindowMetrics().bounds
+        val metrics = vm.windowManager.getCurrentWindowMetrics().bounds
         Timber.d("Screen metrics: ${metrics.width()} x ${metrics.height()}")
 
         val screenAspectRatio = aspectRatio(metrics.width(), metrics.height())
@@ -267,14 +255,14 @@ class CameraFragment : Fragment() {
         val rotation = binding.viewFinder.display.rotation
 
         // CameraProvider
-        val cameraProvider = cameraProvider
+        val cameraProvider = vm.cameraProvider
             ?: throw IllegalStateException("Camera initialization failed.")
 
         // CameraSelector
-        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        val cameraSelector = CameraSelector.Builder().requireLensFacing(vm.lensFacing).build()
 
         // Preview
-        preview = Preview.Builder()
+        vm.preview = Preview.Builder()
             // We request aspect ratio but no resolution
             .setTargetAspectRatio(screenAspectRatio)
             // Set initial target rotation
@@ -282,7 +270,7 @@ class CameraFragment : Fragment() {
             .build()
 
         // ImageCapture
-        imageCapture = ImageCapture.Builder()
+        vm.imageCapture = ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
             // We request aspect ratio but no resolution to match preview config, but letting
             // CameraX optimize for whatever specific resolution best fits our use cases
@@ -293,7 +281,7 @@ class CameraFragment : Fragment() {
             .build()
 
         // ImageAnalysis
-        imageAnalyzer = ImageAnalysis.Builder()
+        vm.imageAnalyzer = ImageAnalysis.Builder()
             // We request aspect ratio but no resolution
             .setTargetAspectRatio(screenAspectRatio)
             // Set initial target rotation, we will have to call this again if rotation changes
@@ -302,7 +290,7 @@ class CameraFragment : Fragment() {
             .build()
             // The analyzer can then be assigned to the instance
             .also {
-                it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
+                it.setAnalyzer(vm.cameraExecutor, LuminosityAnalyzer { luma ->
                     // Values returned from our analyzer are passed to the attached listener
                     // We log image analysis results here - you should do something useful
                     // instead!
@@ -316,12 +304,12 @@ class CameraFragment : Fragment() {
         try {
             // A variable number of use-cases can be passed here -
             // camera provides access to CameraControl & CameraInfo
-            camera = cameraProvider.bindToLifecycle(
-                this, cameraSelector, preview, imageCapture, imageAnalyzer
+            vm.camera = cameraProvider.bindToLifecycle(
+                this, cameraSelector, vm.preview, vm.imageCapture, vm.imageAnalyzer
             )
 
             // Attach the viewfinder's surface provider to preview use case
-            preview?.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+            vm.preview?.setSurfaceProvider(binding.viewFinder.surfaceProvider)
         } catch (e: Exception) {
             Timber.e("Use case binding failed ${e.message}")
         }
@@ -361,7 +349,7 @@ class CameraFragment : Fragment() {
 
     fun takePicture() {
         lifecycleScope.launch(Dispatchers.Main) {
-            when (selectedTimer) {
+            when (vm.selectedTimer) {
                 CameraTimer.SEC3 -> for (i in 3 downTo 1) {
                     binding.countdown.text = i.toString()
                     delay(1000)
@@ -379,18 +367,23 @@ class CameraFragment : Fragment() {
     }
 
     private fun imagePhoto() {
-        // Get a stable reference of the modifiable image capture use case
-        imageCapture?.let { imageCapture ->
+        // Get a stable reference of the modifiable image
+        // capture use case
+        vm.imageCapture?.let { imageCapture ->
 
             // Create output file to hold the image
             val photoFile =
-                createFile(outputDirectory, Constants.FILENAME, Constants.PHOTO_EXTENSION)
+                CameraViewModel.createFile(
+                    outputDirectory,
+                    Constants.FILENAME,
+                    Constants.PHOTO_EXTENSION
+                )
 
             // Setup image capture metadata
             val metadata = Metadata().apply {
 
                 // Mirror image when using the front camera
-                isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+                isReversedHorizontal = vm.lensFacing == CameraSelector.LENS_FACING_FRONT
             }
 
             // Create output options object which contains file + metadata
@@ -400,7 +393,7 @@ class CameraFragment : Fragment() {
 
             // Setup image capture listener which is triggered after photo has been taken
             imageCapture.takePicture(
-                outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+                outputOptions, vm.cameraExecutor, object : ImageCapture.OnImageSavedCallback {
                     override fun onError(e: ImageCaptureException) {
                         Timber.e("Photo capture failed: ${e.message}")
                     }
@@ -453,7 +446,7 @@ class CameraFragment : Fragment() {
     }
 
     fun switchCamera() {
-        lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+        vm.lensFacing = if (CameraSelector.LENS_FACING_FRONT == vm.lensFacing) {
             binding.cameraSwitchButton.setImageResource(R.drawable.ic_camera_front)
             CameraSelector.LENS_FACING_BACK
         } else {
@@ -480,7 +473,7 @@ class CameraFragment : Fragment() {
     }
 
     fun closeTimerAndSelect(timer: CameraTimer) {
-        selectedTimer = timer
+        vm.selectedTimer = timer
         binding.timerConteiner.visibility = View.GONE
         binding.timerButton.setImageResource(setImageDrawableSelect(timer))
     }
@@ -496,7 +489,7 @@ class CameraFragment : Fragment() {
     }
 
     fun closeFlashOptionsAndSelect(flashMode: Int) {
-        imageCapture?.flashMode = flashMode
+        vm.imageCapture?.flashMode = flashMode
         binding.flashConteiner.visibility = View.GONE
         binding.flashButton.setImageResource(setImageDrawableFlashMode(flashMode))
     }
@@ -512,20 +505,10 @@ class CameraFragment : Fragment() {
     private fun updateCameraSwitchButton() {
         try {
             binding.cameraSwitchButton.isEnabled =
-                hasBackCamera() && hasFrontCamera()
+                vm.hasBackCamera() && vm.hasFrontCamera()
         } catch (exception: CameraInfoUnavailableException) {
             binding.cameraSwitchButton.isEnabled = false
         }
-    }
-
-    /** Returns true if the device has an available back camera. False otherwise */
-    private fun hasBackCamera(): Boolean {
-        return cameraProvider?.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA) ?: false
-    }
-
-    /** Returns true if the device has an available front camera. False otherwise */
-    private fun hasFrontCamera(): Boolean {
-        return cameraProvider?.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) ?: false
     }
 
     /**
@@ -608,15 +591,5 @@ class CameraFragment : Fragment() {
 
             image.close()
         }
-    }
-
-    companion object {
-
-        /** Helper function used to create a timestamped file */
-        private fun createFile(baseFolder: File, format: String, extension: String) =
-            File(
-                baseFolder, SimpleDateFormat(format, Locale.US)
-                    .format(System.currentTimeMillis()) + extension
-            )
     }
 }
