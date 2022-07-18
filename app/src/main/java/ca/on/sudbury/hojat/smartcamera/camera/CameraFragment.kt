@@ -182,7 +182,7 @@ class CameraFragment : Fragment() {
         vm.windowManager = WindowManager(view.context)
 
         // Determine the output directory
-        outputDirectory = MainActivity.getOutputDirectory(requireContext())
+        outputDirectory = CameraViewModel.getOutputDirectory(requireContext())
 
         // Wait for the views to be properly laid out
         binding.viewFinder.post {

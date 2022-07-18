@@ -1,10 +1,12 @@
 package ca.on.sudbury.hojat.smartcamera.camera
 
+import android.content.Context
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.lifecycle.ViewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.window.WindowManager
+import ca.on.sudbury.hojat.smartcamera.R
 import ca.on.sudbury.hojat.smartcamera.utils.CameraTimer
 import java.io.File
 import java.text.SimpleDateFormat
@@ -62,5 +64,15 @@ class CameraViewModel(private val useCase: CameraUseCase) : ViewModel() {
                 baseFolder, SimpleDateFormat(format, Locale.US)
                     .format(System.currentTimeMillis()) + extension
             )
+
+        /** Use external media if it is available, our app's file directory otherwise */
+        fun getOutputDirectory(context: Context): File {
+            val appContext = context.applicationContext
+            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
+            }
+            return if (mediaDir != null && mediaDir.exists())
+                mediaDir else appContext.filesDir
+        }
     }
 }
