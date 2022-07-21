@@ -24,7 +24,7 @@
         <entry key="app/src/main/res/drawable/ic_timer_3_sec.xml" value="0.2715" />
         <entry key="app/src/main/res/drawable/ic_timer_off.xml" value="0.2715" />
         <entry key="app/src/main/res/layout-land/fragment_camera.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.363922119140625" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main_new.xml" value="0.28532608695652173" />
         <entry key="app/src/main/res/layout/fragment_camera.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_camera_preview.xml" value="0.33" />

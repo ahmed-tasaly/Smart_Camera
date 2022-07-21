@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -57,6 +58,9 @@ import kotlin.math.min
 
 /** Helper type alias used for analysis use case callbacks */
 typealias LumaListener = (luma: Double) -> Unit
+
+private const val PERMISSIONS_REQUEST_CODE = 10
+
 
 /**
  * Main fragment for this app. Implements all camera operations including:
@@ -113,9 +117,7 @@ class CameraFragment : Fragment() {
         // Make sure that all permissions are still present, since the
         // user could have removed them while the app was in paused state.
         if (!CameraViewModel.hasPermissions(requireContext())) {
-            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
-                CameraFragmentDirections.actionCameraToPermissions()
-            )
+            askForPermissions(requireContext())
         }
     }
 
@@ -131,6 +133,21 @@ class CameraFragment : Fragment() {
         displayManager.unregisterDisplayListener(displayListener)// this will remain in fragment
     }
 
+    private fun askForPermissions(context: Context) {
+        if (!CameraViewModel.hasPermissions(context)) {
+            // If permissions have already been granted, proceed
+            // Request camera-related permissions
+            requestPermissions(Constants.PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        askForPermissions(requireContext())
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -138,6 +155,27 @@ class CameraFragment : Fragment() {
     ): View {
         _fragmentCameraBinding = FragmentCameraBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+            if (PackageManager.PERMISSION_GRANTED != grantResults.firstOrNull()) {
+                // user has not granted the permissions
+                Toast.makeText(
+                    requireContext(),
+                    "Permissions are required for the app to work correctly",
+                    Toast.LENGTH_SHORT
+                ).show()
+                askForPermissions(requireContext())
+            }
+        }
+
     }
 
     private fun setGalleryThumbnail(uri: Uri) {

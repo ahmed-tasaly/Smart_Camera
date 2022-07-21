@@ -16,7 +16,6 @@
 
 package ca.on.sudbury.hojat.smartcamera
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -27,7 +26,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ca.on.sudbury.hojat.smartcamera.databinding.ActivityMainBinding
-import java.io.File
 
 const val KEY_EVENT_ACTION = "key_event_action"
 const val KEY_EVENT_EXTRA = "key_event_extra"
