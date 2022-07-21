@@ -32,7 +32,6 @@ import androidx.navigation.Navigation
 import androidx.window.WindowManager
 import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_ACTION
 import ca.on.sudbury.hojat.smartcamera.KEY_EVENT_EXTRA
-import ca.on.sudbury.hojat.smartcamera.MainActivity
 import ca.on.sudbury.hojat.smartcamera.R
 import ca.on.sudbury.hojat.smartcamera.databinding.FragmentCameraBinding
 import ca.on.sudbury.hojat.smartcamera.gallery.EXTENSION_WHITELIST
@@ -113,7 +112,7 @@ class CameraFragment : Fragment() {
         super.onResume()
         // Make sure that all permissions are still present, since the
         // user could have removed them while the app was in paused state.
-        if (!PermissionsFragment.hasPermissions(requireContext())) {
+        if (!CameraViewModel.hasPermissions(requireContext())) {
             Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
                 CameraFragmentDirections.actionCameraToPermissions()
             )

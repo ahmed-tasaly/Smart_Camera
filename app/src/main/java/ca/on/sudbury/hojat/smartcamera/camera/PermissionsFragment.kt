@@ -1,19 +1,17 @@
 package ca.on.sudbury.hojat.smartcamera.camera
 
-import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import ca.on.sudbury.hojat.smartcamera.R
+import ca.on.sudbury.hojat.smartcamera.camera.CameraViewModel.Companion.hasPermissions
+import ca.on.sudbury.hojat.smartcamera.utils.Constants.PERMISSIONS_REQUIRED
 
 
 private const val PERMISSIONS_REQUEST_CODE = 10
-private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
 /**
  * This fragment doesn't have a UI and its sole purpose is to request
@@ -56,14 +54,6 @@ class PermissionsFragment : Fragment() {
             Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
                 PermissionsFragmentDirections.actionPermissionsToCamera()
             )
-        }
-    }
-
-    companion object {
-
-        /** Convenience method used to check if all permissions required by this app are granted */
-        fun hasPermissions(context: Context) = PERMISSIONS_REQUIRED.all {
-            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
     }
 }

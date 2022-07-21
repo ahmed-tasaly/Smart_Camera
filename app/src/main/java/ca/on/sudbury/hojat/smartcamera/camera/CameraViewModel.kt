@@ -1,17 +1,21 @@
 package ca.on.sudbury.hojat.smartcamera.camera
 
 import android.content.Context
+import android.content.pm.PackageManager
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.window.WindowManager
 import ca.on.sudbury.hojat.smartcamera.R
 import ca.on.sudbury.hojat.smartcamera.utils.CameraTimer
+import ca.on.sudbury.hojat.smartcamera.utils.Constants
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
+
 
 class CameraViewModel(private val useCase: CameraUseCase) : ViewModel() {
 
@@ -73,6 +77,11 @@ class CameraViewModel(private val useCase: CameraUseCase) : ViewModel() {
             }
             return if (mediaDir != null && mediaDir.exists())
                 mediaDir else appContext.filesDir
+        }
+
+        /** Convenience method used to check if all permissions required by this app are granted */
+        fun hasPermissions(context: Context) = Constants.PERMISSIONS_REQUIRED.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
     }
 }

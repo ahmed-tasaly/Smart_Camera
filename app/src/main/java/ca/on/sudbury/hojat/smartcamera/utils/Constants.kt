@@ -1,5 +1,6 @@
 package ca.on.sudbury.hojat.smartcamera.utils
 
+import android.Manifest
 import android.view.View
 
 object Constants {
@@ -21,5 +22,9 @@ object Constants {
     const val PHOTO_EXTENSION = ".jpg"
     const val RATIO_4_3_VALUE = 4.0 / 3.0
     const val RATIO_16_9_VALUE = 16.0 / 9.0
+
+    // All the required permissions for this app.
+    val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
+
 
 }
